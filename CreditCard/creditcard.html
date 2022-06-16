@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"  />
+<html>
+<head>
+    <style>
+        body {
+            background-color: darkseagreen;
+            background-image: url('backcard.png');
+            background-size: 200px;
+        }
+        .ccard {
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-column-gap:20px;
+
+        }
+        .left_ccard{
+
+        }
+
+        .mastervisa{
+            position:fixed;
+            bottom:50px;
+
+        }
+        #creditcard_main {
+            color:white;
+            background-color:darkolivegreen;
+            width: 500px;
+            height: 400px;
+            border-radius: 70px 40px;
+            background-image:url('puce.png');
+            background-position-x:350px;
+            background-position-y:200px;
+            background-repeat:no-repeat;
+            background-size:150px;
+        }
+
+
+        #generator {
+            
+            margin-left: 40px;
+        }
+
+        #content {
+            background-color: black;
+            background-image: url('matrix-code.jpg');
+            background-size: 2000px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            width: 1300px;
+            height: 1500px;
+            border-radius: 100px 100px;
+            padding: 20px 0px 20px 50px;
+        }
+
+        #richjsoncc {
+            width: 1200px;
+            height: 1000px;
+            border-radius: 50px 50px;
+            padding: 25px 0px 0px 25px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: aquamarine;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        #gen_text {
+            margin: 40px 10px 40px 0px;
+            width: 350px;
+            height: 75px;
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+            background-color: green;
+            color: white;
+        }
+
+        #gen_button{
+            height: 70px;
+            width:70px;
+        }
+
+        #json_butt {
+            height: 70px;
+            width: 70px;
+        }
+
+        #nb_times{
+            width:75px;
+
+        }
+        .chill {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+    </style>
+
+</head>
+<body>
+    <script>
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function fill3(n) {
+            if (n.length == 3) {
+                return n;
+            }
+            if (n.length == 2) {
+                return '0' + n;
+            }
+            if (n.length == 1) {
+                return "00" + n;
+            }
+            return "0000";
+        }
+
+        function fill4(n) {
+            if (n.length == 4) {
+                return n;
+            }
+            if (n.length == 3) {
+                return '0' + n;
+            }
+            if (n.length == 2) {
+                return "00" + n;
+            }
+            if (n.length == 1) {
+                return "000" + n;
+            }
+            return "0000";
+
+        }
+
+        function toJSON(cc, cvv) {
+
+            var ans = "{\"cc\" : [\n";
+
+            for (var i = 0; i < cc.length; i++) {
+                ans += "\t{\n";
+                ans += "\t\t\"cccode\" : \"" + cc[i] + "\",\n";
+                ans += "\t\t\"cvv\" : \"" + cvv[i] + "\"\n";
+                ans += "\t}";
+                if (i < cc.length - 1)
+                    ans += ",";
+                ans += "\n";
+
+
+            }
+
+            ans += "]}\n";
+            return ans;
+        }
+
+        function VALID_CODE(num) {
+
+            var cc;
+            cc = num;
+
+            var ind = 0;
+            var sum = 0;
+            for (var i = cc.length - 1; i >= 0; i--) {
+                if (ind % 2 == 0) {
+                    var n = parseInt(cc[i]) * 2;
+                    if (n >= 10) {
+                        n = parseInt(n / 10) + (n % 10);
+                    }
+                    sum += n;
+
+                }
+                else {
+                    sum += parseInt(cc[i]);
+
+                }
+                ind++;
+            }
+
+            var unit;
+            if (sum % 10 != 0) {
+                unit = 10 - (sum % 10);
+                cc += unit;
+            }
+            else {
+                cc += "0";
+            }
+
+
+            return cc;
+
+
+        }
+
+        function getCC() {
+            var cc = type + (fill3(getRandomInt(1000) + ""));
+            cc += fill4(getRandomInt(10000) + "");
+            cc += fill4(getRandomInt(10000) + "");
+            cc += fill3(getRandomInt(1000) + "");
+            var ccd = VALID_CODE(cc);
+            var cvv = fill3(getRandomInt(1000) + "");
+          
+            return [ccd, cvv];
+        }
+
+        var type = "5";
+        //561604134636886
+        function gen_butt_click() {
+            //alert(VALID_CODE('561604134636886'));
+            var nb = 1;
+            try {
+                nb = parseInt($('nb_times').value);
+            }
+            catch {
+                nb = 1;
+            }
+
+            for (var i = 0; i < nb; i++) {
+                var cc = getCC();
+                $('gen_text').value = cc[0] + '-' + cc[1];
+
+                $('richjsoncc').value += '\n' + cc[0] + '-' + cc[1];
+            }
+
+        }
+
+        function gen_type() {
+            if ($('master_check').checked) {
+                type = "5"
+            }
+            else if ($('visa_check').checked) {
+                type = "4";
+            }
+
+        }
+
+        function json_butt_click() {
+            var nb = 1;
+            try {
+                nb = parseInt($('nb_times').value);
+            }
+            catch {
+                nb = 1;
+            }
+            var cd = [], cv = [];
+            for (var i = 0; i < nb; i++) {
+                var cc = getCC();
+                cd.push(cc[0]);
+                cv.push(cc[1]);
+
+            }
+            $('richjsoncc').value += '\n' + toJSON(cd, cv);
+        }
+
+        var SIZE = 200;
+        var UP = true;
+        setInterval(() => {
+            if (UP) {
+                SIZE++;
+                if (SIZE > 200) {
+                    UP = false;
+                }
+            }
+            else {
+                SIZE--;
+                if (SIZE < 150) {
+                    UP = true;
+                }
+            }
+            document.getElementsByTagName('body')[0].style.backgroundSize = SIZE + 'px';
+       
+        },
+            50);
+
+        var SIZE2 = 100;
+        var UP2 = true;
+        setInterval(() => {
+            if (UP2) {
+                SIZE2+=50;
+                if (SIZE2 > 2500) {
+                    UP2 = false;
+                }
+            }
+            else {
+                SIZE2-=50;
+                if (SIZE2 < 100) {
+                    UP2 = true;
+                }
+            }
+            $('content').style.backgroundSize = SIZE2 + 'px';
+           
+        },
+            50);
+
+
+
+    </script>
+
+    <div class="ccard">
+        <div class="left_ccard">
+            <div id="creditcard_main">
+                <div id="generator">
+                    <div style="text-align:center;font-size:25px;" class="chill">Generate CC Code - CVV</div>
+                    <input type="text" value="" id="gen_text" />
+                    <input type="button" value="Generate" id="gen_button" onclick="gen_butt_click();" />
+                    <input type="radio" name="cc" id="master_check" onclick="gen_type();" checked /><label class="chill" for="master_check">MasterCard</label>
+                    <input type="radio" name="cc" value="Visa" id="visa_check" onclick="gen_type();" /><label class="chill" for="visa_check">Visa</label>
+                    <br /><br />
+                    <input type="button"  id="json_butt" value="ToJSON" onclick="json_butt_click();" />
+                    <br /><br />
+                    <label class="chill" for="nb_times">Nb Times: </label><input type="text" id="nb_times" value="1" />
+                </div>
+                
+            </div>
+
+            <div class="mastervisa">
+                <img src="MastercardVisa.png" alt="Credit Card" width="500" height="150" />
+
+            </div>
+            <div class="chill" style="position:relative;bottom:20px;left:50px;">
+                Sponsorized by MasterCard and Visa
+            </div>
+
+        </div>
+
+        <div id="content">
+            <div>
+                <textarea id="richjsoncc">
+                    
+    
+                </textarea>
+
+            </div>
+
+        </div>
+
+    </div>
+    
+
+    <script>
+        gen_type();
+
+
+    </script>
+    
+</body>
+</html>
